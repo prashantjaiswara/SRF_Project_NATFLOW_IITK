@@ -109,7 +109,7 @@ function Copy_Four_Images(current_dir, current_cf, current_AxFy, current_Run, ..
     disp ( UDF_check_and_make_folder( fullfile(DestinationPath, current_cf),current_AxFy ) );
     disp ( UDF_check_and_make_folder( fullfile(DestinationPath, current_cf, current_AxFy ), current_Run ) );
 
-    BMP_list = RawImageNames(25:28);
+    BMP_list = RawImageNames(1:24);
     
     for i_img = 1 :1: length(BMP_list)
         copyfile( fullfile( current_dir,BMP_list(i_img) ) ,...
