@@ -1,6 +1,6 @@
 function [p_x_img , p_y_img , Total_Pixel_X , Total_Pixel_Y ,...
     mm_per_pixel , First_motion_in_ImageNo, Case_list,...
-    ImageFileNameList_with_theta, theta_list_across_AxFy ]...
+    theta_list_across_AxFy ]...
     = UDF_get_NACA_Info(SetInfoPath, CSVFileName)
 
 
@@ -27,7 +27,7 @@ T_SetInfo=readtable(fullfile(SetInfoPath, CSVFileName));
 Total_Pixel_X   = T_SetInfo.Total_Pixel_X;
 Total_Pixel_Y   = T_SetInfo.Total_Pixel_Y;
 
-ImageFileNameList_with_theta   = string(T_SetInfo.Filename);
+% ImageFileNameList_with_theta   = string(T_SetInfo.Filename);
 
 L_x             = T_SetInfo.L_x;
 L_y             = T_SetInfo.L_y;
@@ -37,7 +37,7 @@ T_y             = T_SetInfo.T_y;
 mm_per_pixel    = T_SetInfo.mm_per_pixel;
 mm_per_pixel    = mm_per_pixel(1);
 
-First_motion_in_ImageNo = T_SetInfo.First_motion_in_ImageNo;
+First_motion_in_ImageNo = string(T_SetInfo.First_motion_in_Image_Filename);
 
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
@@ -61,5 +61,5 @@ theta_list_across_AxFy    =  (180/pi)*atan( (T_y-L_y)./(T_x-L_x) );
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-% 
-% end
+
+end
