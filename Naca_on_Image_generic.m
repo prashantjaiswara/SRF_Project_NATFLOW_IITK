@@ -42,7 +42,7 @@ chord =  str2double( extractBetween( Case_list, 'c','_A'));
 amp   =  str2double( extractBetween( Case_list, 'A','F'));
 freq  =  str2double( extractBetween( Case_list, 'F','_R'));
 Run   =  str2double( extract( Case_list, strlength( Case_list ) ) );
-First_motion_in_ImageNo = str2double( extractBetween(First_motion_in_ImageNo,'s','.') );
+ImageNumber_of_FirstImage_with_motion = str2double( extractBetween(First_motion_in_ImageNo,'s','.') );
 
 chordLen = 50/mm_per_pixel;
 t0_list  = zeros( length(chord), 1 );
@@ -57,15 +57,9 @@ naca = UDF_create_airfoil( chordLen, px , py );
 %--------------------------------------------------------------------------
 PathOfImages = UDF_FindFile( ImagePath, '', '.bmp');
 
-
-% I = imread ( fullfile( ImagePath , ImageFileName(1) ) );
-
-% imshow(I);
-% length(chord)
-
 %--------------------------------------------------------------------------
 
-for i_AxFy =  1 : 1 : 1
+for i_AxFy =  1: 1 : 1
     
     if  abs( theta_list_across_AxFy(i_AxFy)) > amp(i_AxFy)
         
@@ -80,40 +74,25 @@ for i_AxFy =  1 : 1 : 1
     end
     
     t0_list ( i_AxFy ) = ( acos(   theta_list_across_AxFy(i_AxFy) / amp(i_AxFy) )   )/ (2 * pi * freq(i_AxFy) );
-%     omega_t0( i_AxFy ) = 2*180*freq(i_AxFy)*t0_list( i_AxFy );
-
     
-    
-    for i_image_steps = First_motion_in_ImageNo(i_AxFy) : 2: First_motion_in_ImageNo(i_AxFy)+10
+    INoFIwM = ImageNumber_of_FirstImage_with_motion(i_AxFy);
+    for i_img_steps = -1 : 1 : 5
         
-        theta = amp(i_AxFy) * cos(2 * pi * freq(i_AxFy) * ( t0_list ( i_AxFy ) + del_t*...
-            (First_motion_in_ImageNo(i_AxFy) - i_image_steps )*0.5 ) );
+        i = INoFIwM + i_img_steps;
+                
+        theta = amp(i_AxFy) * cos( 2*pi*freq(i_AxFy) * ( t0_list(i_AxFy) +...
+            del_t*i_img_steps ) );
 
         figure
         
         hold on
-        I= imread( PathOfImages(i_image_steps)  );
+        I= imread( PathOfImages(INoFIwM + i_img_steps*2)  );
         imshow( I );
-        
         hold on
 
         naca_at_theta = UDF_rotz_shape( naca, [px, py ], theta );
         plot( naca_at_theta(:,1) , naca_at_theta(:,2)  );
-        
         hold on
-        
-
+   
     end
-    
-
-    
-    
-    
-    
-    
 end
-% T = cell( length(t0_list) + 1 , 4);
-% 
-% T(1,:)    =  {'theta_list', 't0', 'omega_t0', 'no_of_image_steps' };
-% T(2:end,:)=   num2cell( [theta_list_across_AxFy, t0_list, omega_t0, no_of_image_steps]) ;
-
