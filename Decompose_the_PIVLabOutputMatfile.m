@@ -3,33 +3,62 @@ clear all
 close all
 
 basepath = 'C:\Users\91935\OneDrive - IIT Kanpur\Natflow_Hari\PIV\PIV_2022-05-17\5_Trail_Codes_with_files';
-Filename = 'c30_A10F1_R1_S12I16.mat';
 
-load( fullfile(basepath,Filename), 'x','y','u_original','v_original');
+PathOfLargestMATfile = FindLargestMATFile( basepath );
 
-for i=1:1:5
+NameOfLargestMATfile = ls( PathOfLargestMATfile );
+SizeOfLargestMATfile = dir(PathOfLargestMATfile).bytes/1024/1024/1024; % size in GB
+
+%--------------------------------------------------------------------------
+load( PathOfLargestMATfile, 'x','y','u_original','v_original' );
+%--------------------------------------------------------------------------
+
+Filename_Prefix = cell2mat( extractBetween( NameOfLargestMATfile, '','.mat') );
+
+x = cell2mat( x(1) );
+y = cell2mat( y(1) );
+
+XY_grid_FileName = strcat( Filename_Prefix,'_xy_grid', '.mat' );
+save( fullfile( basepath, XY_grid_FileName ),'x','y' );
+
+for i=1:1:3
     
     u = cell2mat(u_original(i) );
     v = cell2mat(v_original(i) );
     
-    
-    Filename_Prefix = 'c30_A10F1_R1_S12I16';
-    
+
+    %----------------------------------------------------------------------
     if i>0 && i<10
-        Filename_Suffix= strcat('00',string(i));
+        FileName_Suffix = strcat( '00',string(i) ) ;
         
     elseif i>9 && i<100
-        Filename_Suffix= strcat('0',string(i));
+        FileName_Suffix = strcat( '0',string(i)  ) ;
         
     elseif i>99 && i<1000
-        Filename_Suffix= string(i);
+        FileName_Suffix = string(i) ;
         
-    end
+    end    
+    %----------------------------------------------------------------------
 
-    FName = strcat( Filename_Prefix,'_',Filename_Suffix,'.mat');
     
-    save(fullfile(basepath, FName),'u','v' );
+    uv_grid_FName = strcat( Filename_Prefix,'_', FileName_Suffix, '.mat');    
+    save(fullfile(basepath, uv_grid_FName),'u','v' );
+    
     
 end
 
 
+
+function PathOfLargestMATfile = FindLargestMATFile( basepath )
+
+    PathOfFile = UDF_FindFile( basepath, '', '.mat');
+    SizeOfFile = zeros( length(PathOfFile),1 );
+
+    for i=1:1:length( PathOfFile )
+        SizeOfFile(i) = dir( PathOfFile(i) ).bytes;
+    end
+
+    index_of_largest_MATfile = find( SizeOfFile == max( SizeOfFile ) );
+    PathOfLargestMATfile   = PathOfFile( index_of_largest_MATfile );
+
+end
